@@ -1,8 +1,10 @@
-FROM amazonlinux:2017.03
-MAINTAINER Ben Jones <ben@fogbutter.com>
+FROM amazonlinux:2017.03.1.20170812
+LABEL maintainer="Ben Jones <ben@fogbutter.com>"
+ARG PYTHON_VERSION=3.6.4
+ARG BOTO3_VERSION=1.5.25
+ARG BOTOCORE_VERISON=1.8.39
 
-ARG PYTHON_VERSION=3.6.2
-
+COPY entrypoint.sh /entrypoint.sh
 RUN yum -y update &&\
     yum install -y findutils gcc sqlite-devel zlib-devel bzip2-devel openssl-devel readline-devel &&\
     yum -y autoremove &&\
@@ -13,10 +15,8 @@ RUN yum -y update &&\
     ./configure --enable-optimizations && make && make altinstall &&\
     cd ..&&\
     python3.6 -m venv /venv &&\
-    rm -rf Python-${PYTHON_VERSION}* &&\
-    printf "#!/bin/sh\nsource /venv/bin/activate\nexec \"\$@\"\n" > /entrypoint.sh &&\
+    /venv/bin/pip install boto3==${BOTO3_VERSION} botocore==${BOTOCORE_VERSION} &&\
     chmod +x /entrypoint.sh &&\
-    cat /entrypoint.sh
-
+    rm -rf Python-${PYTHON_VERSION}* &&\
+    yum clean all
 ENTRYPOINT ["/entrypoint.sh"]
-
