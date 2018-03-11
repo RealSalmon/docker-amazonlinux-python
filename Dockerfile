@@ -2,7 +2,7 @@ FROM amazonlinux:2017.03.1.20170812
 LABEL maintainer="Ben Jones <ben@fogbutter.com>"
 ARG PYTHON_VERSION=3.6.4
 ARG BOTO3_VERSION=1.5.25
-ARG BOTOCORE_VERISON=1.8.39
+ARG BOTOCORE_VERSION=1.8.39
 
 COPY entrypoint.sh /entrypoint.sh
 RUN yum -y update &&\
