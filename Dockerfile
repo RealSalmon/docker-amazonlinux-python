@@ -15,8 +15,17 @@ RUN yum -y update &&\
     ./configure --enable-optimizations && make && make altinstall &&\
     cd ..&&\
     python3.6 -m venv /venv &&\
-    /venv/bin/pip install boto3==${BOTO3_VERSION} botocore==${BOTOCORE_VERSION} &&\
+    /venv/bin/pip install --no-cache boto3==${BOTO3_VERSION} botocore==${BOTOCORE_VERSION} &&\
     chmod +x /entrypoint.sh &&\
     rm -rf Python-${PYTHON_VERSION}* &&\
-    yum clean all
+    yum clean all && \
+    mkdir /python-testing && \
+    /venv/bin/pip install --no-cache -t /python-testing \
+      --install-option="--install-scripts=/usr/local/bin" \
+      boto3==${BOTO3_VERSION} \
+      botocore==${BOTOCORE_VERSION} \
+      pytest \
+      pytest-cov \
+      moto
+
 ENTRYPOINT ["/entrypoint.sh"]
